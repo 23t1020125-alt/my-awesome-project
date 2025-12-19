@@ -36,7 +36,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               const Text(
-                "Nixtio User",
+                "Duong User",
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -44,7 +44,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
               const Text(
-                "user@nixtio.com",
+                "user@duong.com",
                 style: TextStyle(fontSize: 16, color: kGreyColor),
               ),
               const SizedBox(height: 40),

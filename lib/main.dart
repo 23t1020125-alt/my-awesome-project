@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Nixtio App',
+      title: 'Duong App',
       theme: ThemeData(
         fontFamily: 'Arial',
         useMaterial3: true,

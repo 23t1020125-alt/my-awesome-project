@@ -3,12 +3,26 @@ import 'widgets/app_styles.dart';
 import 'screens/news/news_list.dart';
 import 'screens/product/my_product.dart';
 import 'screens/auth/profile.dart';
+import 'screens/auth/login.dart'; 
 import 'screens/utilities/counter.dart';
 import 'screens/utilities/change_color.dart';
 import 'screens/utilities/feedback.dart';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key});
+
+  Widget _buildDrawerItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    Color color = kDarkColor,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: color),
+      title: Text(title, style: TextStyle(color: color, fontSize: 16)),
+      onTap: onTap,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,35 +40,29 @@ class MenuScreen extends StatelessWidget {
                   children: [
                     const SizedBox(height: 16),
                     
-                    // --- HEADER: PROFILE (TRÁI) - NOTIFICATION (PHẢI) ---
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // 1. Avatar Profile (Bấm vào để sang ProfileScreen)
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                        // THAY THẾ AVATAR BẰNG NÚT MENU ĐỂ MỞ DRAWER
+                        Builder(
+                          builder: (context) {
+                            return GestureDetector(
+                              onTap: () {
+                                // Lệnh mở Drawer
+                                Scaffold.of(context).openDrawer(); 
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: kDarkColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(Icons.menu_rounded, color: Colors.white),
+                              ),
                             );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: kDarkColor, width: 2),
-                            ),
-                            child: const CircleAvatar(
-                              radius: 24,
-                              backgroundImage: NetworkImage("https://i.pravatar.cc/300"), // Ảnh mẫu online
-                              // Nếu lỗi mạng hoặc thích icon thì dùng dòng dưới:
-                              // backgroundColor: Colors.white,
-                              // child: Icon(Icons.person, color: kDarkColor),
-                            ),
-                          ),
+                          }
                         ),
 
-                        // 2. Notification Icon
                         Stack(
                           children: [
                             Container(
@@ -93,7 +101,7 @@ class MenuScreen extends StatelessWidget {
                     
                     const SizedBox(height: 30),
                     const Text(
-                      "Hi Nixtio,",
+                      "Welcome Back,",
                       style: TextStyle(
                         fontSize: 34,
                         fontWeight: FontWeight.w800,
@@ -102,17 +110,16 @@ class MenuScreen extends StatelessWidget {
                       ),
                     ),
                     const Text(
-                      "Find your\nfavorites here",
+                      "Nixtio!",
                       style: TextStyle(
-                        fontSize: 34,
-                        fontWeight: FontWeight.w800,
+                        fontSize: 40,
+                        fontWeight: FontWeight.w900,
                         color: kDarkColor,
                         height: 1.1,
                       ),
                     ),
                     const SizedBox(height: 30),
                     
-                    // --- GRID MENU ---
                     GridView.count(
                       crossAxisCount: 2,
                       shrinkWrap: true,
@@ -146,8 +153,8 @@ class MenuScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 24),
-                    const AppTextField(hint: "Search anything...", icon: Icons.search),
-                    const SizedBox(height: 50), // Khoảng trống dưới cùng
+                    const AppTextField(hint: "Search anything...", icon: Icons.search), 
+                    const SizedBox(height: 50), 
                   ],
                 ),
               ),
@@ -155,9 +162,79 @@ class MenuScreen extends StatelessWidget {
           ],
         ),
       ),
+      
+      drawer: Drawer(
+        backgroundColor: Colors.white,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            // Header của Drawer
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: kTopColor, // Màu nền cho Header
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.person, size: 40, color: kDarkColor),
+                  ),
+                  SizedBox(height: 8),
+                  Text('Nixtio User', style: TextStyle(color: kDarkColor, fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text('user@nixtio.com', style: TextStyle(color: kGreyColor, fontSize: 12)),
+                ],
+              ),
+            ),
+            
+            // Mục Menu chính
+            _buildDrawerItem(
+              icon: Icons.home,
+              title: 'Home',
+              onTap: () => Navigator.pop(context), // Đóng Drawer
+            ),
+            _buildDrawerItem(
+              icon: Icons.person_outline,
+              title: 'Profile',
+              onTap: () {
+                Navigator.pop(context); // Đóng Drawer trước
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.color_lens_outlined,
+              title: 'Change Color',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangeColorScreen()));
+              },
+            ),
+            
+            const Divider(), // Đường kẻ phân cách
+            
+            // Mục Log Out
+            _buildDrawerItem(
+              icon: Icons.logout,
+              title: 'Log Out',
+              onTap: () {
+                // Thoát ra khỏi Menu và quay về Login (xóa sạch các màn hình cũ)
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  (route) => false, 
+                );
+              },
+              color: Colors.red, // Làm nổi bật
+            ),
+          ],
+        ),
+      ),
     );
   }
 
+  // GIỮ NGUYÊN _buildFeatureCard CỦA BẠN
   Widget _buildFeatureCard(
     BuildContext context,
     IconData icon,
@@ -174,7 +251,7 @@ class MenuScreen extends StatelessWidget {
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-             const SnackBar(content: Text("Feature coming soon!")),
+              const SnackBar(content: Text("Feature coming soon!")),
           );
         }
       },
@@ -229,6 +306,7 @@ class MenuScreen extends StatelessWidget {
     );
   }
 
+  // GIỮ NGUYÊN _buildUtilityCard CỦA BẠN
   Widget _buildUtilityCard(BuildContext context) {
     return GestureDetector(
       onTap: () {
